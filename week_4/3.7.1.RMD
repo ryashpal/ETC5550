@@ -1,0 +1,118 @@
+---
+title: "3.7.1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+
+library(fpp3)
+
+```
+
+# 3.7 Exercises
+
+
+## 1. Consider the GDP information in global_economy. Plot the GDP per capita for each country over time. Which country has the highest GDP per capita? How has this changed over time?
+
+
+### Plot the GDP per capita for each country over time.
+
+
+#### Take a look at the dataset
+
+```{r}
+
+data("global_economy")
+
+head(global_economy)
+
+```
+
+#### Let's look at the number of countries in the dataset
+
+```{r}
+
+unique(global_economy$Country)
+```
+#### Select a subset of countries to plot
+
+```{r}
+
+global_economy %>%
+  filter(Country %in% c("Australia", "Canada", "France", "Germany", "Luxembourg", "Netherlands", "New Zealand", "OECD members", "Singapore", "Spain", "Switzerland", "United Kingdom", "United States")) %>%
+  autoplot() +
+  labs(title= "GDP total", y = "$US")
+
+```
+
+```{r}
+
+global_economy %>%
+  filter(Country %in% c("Australia", "Canada", "France", "Germany", "Luxembourg", "Netherlands", "New Zealand", "Singapore", "Spain", "Switzerland", "United Kingdom")) %>%
+  autoplot() +
+  labs(title= "GDP total", y = "$US")
+
+```
+
+```{r}
+
+global_economy %>%
+  filter(Country %in% c("Australia", "Canada", "France", "Germany", "Luxembourg", "Netherlands", "New Zealand", "Singapore", "Spain", "Switzerland", "United Kingdom", "United States")) %>%
+  autoplot(GDP/Population)+
+  labs(title= "GDP per capita", y = "$US")
+
+```
+
+```{r}
+
+global_economy %>%
+  filter(Country %in% c("Australia", "Canada", "Luxembourg", "New Zealand", "United Kingdom", "United States")) %>%
+  autoplot(GDP/Population)+
+  labs(title= "GDP per capita", y = "$US")
+
+```
+### Which country has the highest GDP per capita?
+
+```{r}
+global_economy %>%
+  mutate(GDP_per_capita = (GDP/Population)) %>%
+  filter(GDP_per_capita == max(GDP_per_capita, na.rm = TRUE))
+```
+### How has this changed over time?
+
+#### Changes in Monaco's GDP over time
+
+```{r}
+global_economy %>%
+  filter(Country %in% c("Monaco")) %>%
+  autoplot(GDP/Population)+
+  labs(title= "GDP per capita", y = "$US")
+```
+
+#### Country with the highest GDP every year
+
+```{r}
+
+global_economy %>%
+  mutate(GDP_per_capita = (GDP/Population)) %>%
+  filter(!Country %in% c("World", "High income", "OECD members", "Post-demographic dividend", "Europe & Central Asia", "European Union", "East Asia & Pacific", "IDA & IBRD total", "Low & middle income", "IBRD only", "Middle income", "North America", "Euro area")) %>%
+  as_tibble() %>%
+  group_by(Year) %>%
+  filter(GDP_per_capita == max(GDP_per_capita, na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(Year, Country, GDP_per_capita) %>%
+  arrange(desc(Year))
+
+```
+#### Monaco vs Liechtenstein vs Luxembourg
+
+```{r}
+global_economy %>%
+  filter(Country %in% c("Monaco", "Liechtenstein", "Luxembourg")) %>%
+  autoplot(GDP/Population)+
+  labs(title= "GDP per capita", y = "$US")
+```
